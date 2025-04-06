@@ -1,0 +1,2289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockMaster - Inventory Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-50">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <div class="sidebar bg-indigo-700 text-white w-64 flex flex-col">
+            <div class="p-4 flex items-center justify-between border-b border-indigo-600">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-boxes text-2xl"></i>
+                    <span class="logo-text text-xl font-bold">StockMaster</span>
+                </div>
+                <button id="toggle-sidebar" class="expand-icon text-white focus:outline-none transition-transform">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto py-4">
+                <nav>
+                    <div class="px-4 space-y-2">
+                        <a href="#" class="nav-link flex items-center space-x-3 px-3 py-2 rounded-lg" data-page="dashboard">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span class="nav-text">Dashboard</span>
+                        </a>
+                        <a href="#" class="nav-link flex items-center space-x-3 px-3 py-2 rounded-lg" data-page="products">
+                            <i class="fas fa-box-open"></i>
+                            <span class="nav-text">Products</span>
+                        </a>
+                        <a href="#" class="nav-link flex items-center space-x-3 px-3 py-2 rounded-lg" data-page="inventory">
+                            <i class="fas fa-warehouse"></i>
+                            <span class="nav-text">Inventory</span>
+                        </a>
+                        <a href="#" class="nav-link flex items-center space-x-3 px-3 py-2 rounded-lg" data-page="suppliers">
+                            <i class="fas fa-truck"></i>
+                            <span class="nav-text">Suppliers</span>
+                        </a>
+                        <a href="#" class="nav-link flex items-center space-x-3 px-3 py-2 rounded-lg" data-page="orders">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                            <span class="nav-text">Orders</span>
+                        </a>
+                        <a href="#" class="nav-link flex items-center space-x-3 px-3 py-2 rounded-lg" data-page="reports">
+                            <i class="fas fa-chart-line"></i>
+                            <span class="nav-text">Reports</span>
+                        </a>
+                        <a href="#" class="nav-link flex items-center space-x-3 px-3 py-2 rounded-lg" data-page="users">
+                            <i class="fas fa-users"></i>
+                            <span class="nav-text">Users</span>
+                        </a>
+                        <a href="#" class="nav-link flex items-center space-x-3 px-3 py-2 rounded-lg" data-page="settings">
+                            <i class="fas fa-cog"></i>
+                            <span class="nav-text">Settings</span>
+                        </a>
+                    </div>
+                </nav>
+            </div>
+            
+            <div class="p-4 border-t border-indigo-600">
+                <div class="flex items-center space-x-3">
+                    <img src="https://ui-avatars.com/api/?name=Admin+User&background=random" alt="User" class="w-10 h-10 rounded-full">
+                    <div class="nav-text">
+                        <div class="font-medium">Admin User</div>
+                        <div class="text-xs text-indigo-200">admin@example.com</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto">
+            <!-- Top Navigation -->
+            <header class="bg-white shadow-sm">
+                <div class="flex items-center justify-between px-6 py-4">
+                    <h1 id="page-title" class="text-2xl font-bold text-gray-800">Dashboard</h1>
+                    <div class="flex items-center space-x-4">
+                        <div class="relative">
+                            <input type="text" placeholder="Search..." class="pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                        </div>
+                        <button class="p-2 rounded-full hover:bg-gray-100 relative">
+                            <i class="fas fa-bell text-gray-600"></i>
+                            <span class="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500"></span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Alert Container -->
+            <div id="alert-container" class="px-6 pt-4"></div>
+            
+            <!-- Main Content Area -->
+            <div id="page-content" class="p-6 page-content">
+                <!-- Dashboard content will be loaded here by default -->
+                <div id="dashboard-page">
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                        <div class="bg-white rounded-xl shadow-sm p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500">Total Products</p>
+                                    <h3 class="text-2xl font-bold">1,248</h3>
+                                    <p class="text-green-500 text-sm mt-1"><i class="fas fa-arrow-up mr-1"></i> 12% from last month</p>
+                                </div>
+                                <div class="p-3 rounded-full bg-indigo-100 text-indigo-600">
+                                    <i class="fas fa-box-open text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-xl shadow-sm p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500">Low Stock Items</p>
+                                    <h3 class="text-2xl font-bold">42</h3>
+                                    <p class="text-red-500 text-sm mt-1"><i class="fas fa-arrow-up mr-1"></i> 5% from last month</p>
+                                </div>
+                                <div class="p-3 rounded-full bg-red-100 text-red-600">
+                                    <i class="fas fa-exclamation-triangle text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-xl shadow-sm p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500">Pending Orders</p>
+                                    <h3 class="text-2xl font-bold">28</h3>
+                                    <p class="text-yellow-500 text-sm mt-1"><i class="fas fa-arrow-down mr-1"></i> 3% from last month</p>
+                                </div>
+                                <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
+                                    <i class="fas fa-clipboard-list text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-xl shadow-sm p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500">Total Value</p>
+                                    <h3 class="text-2xl font-bold">$124,890</h3>
+                                    <p class="text-green-500 text-sm mt-1"><i class="fas fa-arrow-up mr-1"></i> 8% from last month</p>
+                                </div>
+                                <div class="p-3 rounded-full bg-green-100 text-green-600">
+                                    <i class="fas fa-dollar-sign text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Charts and Recent Activity -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                        <!-- Inventory Chart -->
+                        <div class="bg-white rounded-xl shadow-sm p-6 lg:col-span-2">
+                            <div class="flex items-center justify-between mb-4">
+                                <h2 class="text-lg font-semibold">Inventory Overview</h2>
+                                <select class="border border-gray-300 rounded-lg px-3 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    <option>Last 7 Days</option>
+                                    <option selected>Last 30 Days</option>
+                                    <option>Last 90 Days</option>
+                                </select>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="inventoryChart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <!-- Recent Activity -->
+                        <div class="bg-white rounded-xl shadow-sm p-6">
+                            <h2 class="text-lg font-semibold mb-4">Recent Activity</h2>
+                            <div class="space-y-4">
+                                <div class="flex items-start">
+                                    <div class="p-2 rounded-full bg-indigo-100 text-indigo-600 mr-3">
+                                        <i class="fas fa-box"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium">New product added</p>
+                                        <p class="text-sm text-gray-500">"Wireless Headphones" was added to inventory</p>
+                                        <p class="text-xs text-gray-400 mt-1">2 hours ago</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start">
+                                    <div class="p-2 rounded-full bg-green-100 text-green-600 mr-3">
+                                        <i class="fas fa-truck"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium">Order fulfilled</p>
+                                        <p class="text-sm text-gray-500">Order #1245 was shipped to customer</p>
+                                        <p class="text-xs text-gray-400 mt-1">5 hours ago</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start">
+                                    <div class="p-2 rounded-full bg-yellow-100 text-yellow-600 mr-3">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium">Low stock alert</p>
+                                        <p class="text-sm text-gray-500">"Bluetooth Speaker" stock is below threshold</p>
+                                        <p class="text-xs text-gray-400 mt-1">1 day ago</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start">
+                                    <div class="p-2 rounded-full bg-blue-100 text-blue-600 mr-3">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium">New user added</p>
+                                        <p class="text-sm text-gray-500">"John Smith" was added as warehouse staff</p>
+                                        <p class="text-xs text-gray-400 mt-1">2 days ago</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Products and Quick Actions -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Recent Products -->
+                        <div class="bg-white rounded-xl shadow-sm p-6 lg:col-span-2">
+                            <div class="flex items-center justify-between mb-4">
+                                <h2 class="text-lg font-semibold">Recent Products</h2>
+                                <button class="text-indigo-600 hover:text-indigo-800" onclick="showAlert('success', 'Viewing all products')">View All</button>
+                            </div>
+                            
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        <tr class="cursor-pointer hover:bg-gray-50" onclick="loadPage('product-detail', 'headphone123')">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="flex-shrink-0 h-10 w-10">
+                                                        <img class="h-10 w-10 rounded" src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80" alt="Headphones">
+                                                    </div>
+                                                    <div class="ml-4">
+                                                        <div class="text-sm font-medium text-gray-900">Wireless Headphones</div>
+                                                        <div class="text-sm text-gray-500">SKU: HP-2023</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Electronics</td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm text-gray-900">124</div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$89.99</td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">In Stock</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr class="cursor-pointer hover:bg-gray-50" onclick="loadPage('product-detail', 'camera456')">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="flex-shrink-0 h-10 w-10">
+                                                        <img class="h-10 w-10 rounded" src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80" alt="Camera">
+                                                    </div>
+                                                    <div class="ml-4">
+                                                        <div class="text-sm font-medium text-gray-900">Digital Camera</div>
+                                                        <div class="text-sm text-gray-500">SKU: CAM-2023</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Electronics</td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm text-gray-900">56</div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$249.99</td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">In Stock</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr class="cursor-pointer hover:bg-gray-50" onclick="loadPage('product-detail', 'speaker789')">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="flex-shrink-0 h-10 w-10">
+                                                        <img class="h-10 w-10 rounded" src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80" alt="Speaker">
+                                                    </div>
+                                                    <div class="ml-4">
+                                                        <div class="text-sm font-medium text-gray-900">Bluetooth Speaker</div>
+                                                        <div class="text-sm text-gray-五百">SKU: SPK-2023</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Electronics</td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm text-gray-900">8</div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$59.99</td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Low Stock</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <!-- Quick Actions -->
+                        <div class="bg-white rounded-xl shadow-sm p-6">
+                            <h2 class="text-lg font-semibold mb-4">Quick Actions</h2>
+                            <div class="space-y-3">
+                                <button class="w-full flex items-center justify-between px-4 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition" onclick="openModal('add-product-modal')">
+                                    <span>Add New Product</span>
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                                
+                                <button class="w-full flex items-center justify-between px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition" onclick="openModal('create-order-modal')">
+                                    <span>Create Purchase Order</span>
+                                    <i class="fas fa-file-invoice"></i>
+                                </button>
+                                
+                                <button class="w-full flex items-center justify-between px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition" onclick="loadPage('reports')">
+                                    <span>Generate Report</span>
+                                    <i class="fas fa-file-export"></i>
+                                </button>
+                                
+                                <button class="w-full flex items center-center justify-between px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition" onclick="openModal('inventory-count-modal')">
+                                    <span>Inventory Count</span>
+                                    <i class="fas fa-clipboard-check"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="mt-6">
+                                <h3 class="font-medium mb-2">Low Stock Items</h3>
+                                <div class="space-y-2">
+                                    <div class="flex items-center justify-between p-3 bg-red-50 rounded-lg">
+                                        <div>
+                                            <p class="font-medium">Bluetooth Speaker</p>
+                                            <p class="text-sm text-gray-500">8 remaining</p>
+                                        </div>
+                                        <button class="text-red-600 hover:text-red-800" onclick="loadPage('product-detail', 'speaker789')">
+                                            <i class="fas fa-arrow-right"></i>
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between p-3 bg-red-50 rounded-lg">
+                                        <div>
+                                            <p class="font-medium">Wireless Mouse</p>
+                                            <p class="text-sm text-gray-500">5 remaining</p>
+                                        </div>
+                                        <button class="text-red-600 hover:text-red-800" onclick="showAlert('warning', 'Wireless Mouse details would load here')">
+                                            <i class="fas fa-arrow-right"></i>
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between p-3 bg-red-50 rounded-lg">
+                                        <div>
+                                            <p class="font-medium">USB-C Cable</p>
+                                            <p class="text-sm text-gray-500">3 remaining</p>
+                                        </div>
+                                        <button class="text-red-600 hover:text-red-800" onclick="showAlert('warning', 'USB-C Cable details would load here')">
+                                            <i class="fas fa-arrow-right"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Products Page (hidden by default) -->
+                <div id="products-page" class="hidden">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold">Products</h2>
+                        <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center" onclick="openModal('add-product-modal')">
+                            <i class="fas fa-plus mr-2"></i> Add Product
+                        </button>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
+                        <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+                            <div class="relative w-64">
+                                <input type="text" placeholder="Search products..." class="pl-10 pr-4 py-2 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                            </div>
+                            <div class="flex space-x-2">
+                                <select class="border border-gray-300 rounded-lg px-3 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    <option>All Categories</option>
+                                    <option>Electronics</option>
+                                    <option>Clothing</option>
+                                    <option>Home & Garden</option>
+                                </select>
+                                <button class="p-2 rounded-lg border border-gray-300 hover:bg-gray-50">
+                                    <i class="fas fa-filter text-gray-600"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SKU</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div class="flex-shrink-0 h-10 w-10">
+                                                    <img class="h-10 w-10 rounded" src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80" alt="Headphones">
+                                                </div>
+                                                <div class="ml-4">
+                                                    <div class="text-sm font-medium text-gray-900">Wireless Headphones</div>
+                                                    <div class="text-sm text-gray-500">Electronics</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">HP-2023</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Electronics</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">124</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$89.99</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">In Stock</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <button class="text-indigo-600 hover:text-indigo-900 mr-3" onclick="loadPage('product-detail', 'headphone123')">View</button>
+                                            <button class="text-yellow-600 hover:text-yellow-900 mr-3" onclick="openModal('edit-product-modal')">Edit</button>
+                                            <button class="text-red-600 hover:text-red-900" onclick="confirmDelete('headphone123')">Delete</button>
+                                        </td>
+                                    </tr>
+                                    
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div class="flex-shrink-0 h-10 w-10">
+                                                    <img class="h-10 w-10 rounded" src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80" alt="Camera">
+                                                </div>
+                                                <div class="ml-4">
+                                                    <div class="text-sm font-medium text-gray-900">Digital Camera</div>
+                                                    <div class="text-sm text-gray-500">Electronics</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">CAM-2023</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Electronics</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">56</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$249.99</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">In Stock</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <button class="text-indigo-600 hover:text-indigo-900 mr-3" onclick="loadPage('product-detail', 'camera456')">View</button>
+                                            <button class="text-yellow-600 hover:text-yellow-900 mr-3" onclick="openModal('edit-product-modal')">Edit</button>
+                                            <button class="text-red-600 hover:text-red-900" onclick="confirmDelete('camera456')">Delete</button>
+                                        </td>
+                                    </tr>
+                                    
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div class="flex-shrink-0 h-10 w-10">
+                                                    <img class="h-10 w-10 rounded" src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80" alt="Speaker">
+                                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-900">Bluetooth Speaker</div>
+                                    <div class="text-sm text-gray-500">Electronics</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">SPK-2023</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Electronics</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">8</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$59.99</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Low Stock</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button class="text-indigo-600 hover:text-indigo-900 mr-3" onclick="loadPage('product-detail', 'speaker789')">View</button>
+                            <button class="text-yellow-600 hover:text-yellow-900 mr-3" onclick="openModal('edit-product-modal')">Edit</button>
+                            <button class="text-red-600 hover:text-red-900" onclick="confirmDelete('speaker789')">Delete</button>
+                        </td>
+                    </tr>
+                    
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10">
+                                    <img class="h-10 w-10 rounded" src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80" alt="Shoes">
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-900">Running Shoes</div>
+                                    <div class="text-sm text-gray-500">Footwear</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">SH-2023</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Footwear</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">45</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$79.99</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">In Stock</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button class="text-indigo-600 hover:text-indigo-900 mr-3" onclick="showAlert('info', 'Running Shoes details would show here')">View</button>
+                            <button class="text-yellow-600 hover:text-yellow-900 mr-3" onclick="openModal('edit-product-modal')">Edit</button>
+                            <button class="text-red-600 hover:text-red-900" onclick="confirmDelete('shoe123')">Delete</button>
+                        </td>
+                    </tr>
+                    
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10">
+                                    <img class="h-10 w-10 rounded" src="https://images.unsplash.com/photo-1560343090-f0409e92791a?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80" alt="Shirt">
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-900">Cotton T-Shirt</div>
+                                    <div class="text-sm text-gray-500">Apparel</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">TS-2023</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Apparel</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">0</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$19.99</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Out of Stock</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button class="text-indigo-600 hover:text-indigo-900 mr-3" onclick="showAlert('info', 'Cotton T-Shirt details would show here')">View</button>
+                            <button class="text-yellow-600 hover:text-yellow-900 mr-3" onClick="openModal('edit-product-modal')">Edit</button>
+                            <button class="text-red-600 hover:text-red-900" onclick="confirmDelete('tshirt456')">Delete</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+            <div class="text-sm text-gray-500">
+                Showing <span class="font-medium">1</span> to <span class="font-medium">5</span> of <span class="font-medium">24</span> products
+            </div>
+            <div class="flex space-x-2">
+                <button class="px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-50" disabled>
+                    Previous
+                </button>
+                <button class="px-3 py-1 border border-indigo-600 bg-indigo-600 text-white rounded-lg">
+                    1
+                </button>
+                <button class="px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-50">
+                    2
+                </button>
+                <button class="px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-50">
+                    3
+                </button>
+                <button class="px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-50">
+                    Next
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Inventory Page (hidden by default) -->
+<div id="inventory-page" class="hidden">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold">Inventory Management</h2>
+        <div class="flex space-x-4">
+            <button class="bg-indigo 600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center" onclick="openModal('inventory-adjustment-modal')">
+                <i class="fas fa-exchange-alt mr-2"></i> Adjust Inventory
+            </button>
+            <button class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 flex items-center" onclick="openModal('inventory-count-modal')">
+                <i class="fas fa-clipboard-check mr-2"></i> Inventory Count
+            </button>
+        </div>
+    </div>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+        <!-- Inventory Summary -->
+        <div class="bg-white rounded-xl shadow-sm p-6 lg:col-span-2">
+            <h3 class="text-lg font-semibold mb-4">Inventory Summary</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Total Products</p>
+                            <h4 class="text-xl font-bold mt-1">1,248</h4>
+                        </div>
+                        <div class="p-2 rounded-full bg-indigo-100 text-indigo-600">
+                            <i class="fas fa-box-open"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Low Stock</p>
+                            <h4 class="text-xl font-bold mt-1">42</h4>
+                        </div>
+                        <div class="p-2 rounded-full bg-yellow-100 text-yellow-600">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Out of Stock</p>
+                            <h4 class="text-xl font-bold mt-1">16</h4>
+                        </div>
+                        <div class="p-2 rounded-full bg-red-100 text-red-600">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold">Stock Movements</h3>
+                    <select class="border border-gray-300 rounded-lg px-3 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option>Last 7 Days</option>
+                        <option selected>Last 30 Days</option>
+                        <option>Last 90 Days</option>
+                    </select>
+                </div>
+                <div class="chart-container">
+                    <canvas id="stockMovementChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Adjustments -->
+        <div class="bg-white rounded-xl shadow-sm p-6">
+            <h3 class="text-lg font-semibold mb-4">Recent Adjustments</h3>
+            <div class="space-y-4">
+                <div class="border-b border-gray-200 pb-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm font-medium">Wireless Headphones</span>
+                        <span class="text-sm text-green-600">+12</span>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Received new shipment from Supplier A</p>
+                    <p class="text-xs text-gray-400 mt-1">Today, 10:42 AM</p>
+                </div>
+                <div class="border-b border-gray-200 pb-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm font-medium">Digital Camera</span>
+                        <span class="text-sm text-red-600">-5</span>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Order fulfillment #ORD-1245</p>
+                    <p class="text-xs text-gray-400 mt-1">Yesterday, 3:15 PM</p>
+                </div>
+                <div class="border-b border-gray-200 pb-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm font-medium">Bluetooth Speaker</span>
+                        <span class="text-sm text-red-600">-2</span>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Store display - damaged packaging</p>
+                    <p class="text-xs text-gray-400 mt-1">Yesterday, 11:30 AM</p>
+                </div>
+                <div class="border-b border-gray-200 pb-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm font-medium">USB-C Cable</span>
+                        <span class="text-sm text-green-600">+25</span>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Received new shipment from Supplier B</p>
+                    <p class="text-xs text-gray-400 mt-1">2 days ago</p>
+                </div>
+                <div class="pt-2">
+                    <button class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
+                        View all adjustments <i class="fas fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Low Stock Items -->
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold">Low Stock Items</h3>
+            <button class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
+                See all
+            </button>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current Stock</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock Threshold</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reorder</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10">
+                                    <img class="h-10 w-10 rounded" src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80" alt="Speaker">
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-900">Bluetooth Speaker</div>
+                                    <div class="text-sm text-gray-500">SKU: SPK-2023</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">8</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">10</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button class="text-indigo-600 hover:text-indigo-900" onclick="openModal('reorder-product-modal')">
+                                <i class="fas fa-shopping-cart mr-1"></i> Reorder
+                            </button>
+                        </td>
+                    </tr>
+                    
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10">
+                                    <img class="h-10 w-10 rounded" src="https://images.unsplash.com/photo-1591488320449-011701bb6704?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80" alt="Mouse">
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-900">Wireless Mouse</div>
+                                    <div class="text-sm text-gray-500">SKU: MOU-2023</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">5</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">15</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button class="text-indigo-600 hover:text-indigo-900" onclick="openModal('reorder-product-modal')">
+                                <i class="fas fa-shopping-cart mr-1"></i> Reorder
+                            </button>
+                        </td>
+                    </tr>
+                    
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10">
+                                    <img class="h-10 w-10 rounded" src="https://images.unsplash.com/photo-1585771724684-38269d6639fd?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80" alt="Cable">
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-900">USB-C Cable</div>
+                                    <div class="text-sm text-gray-500">SKU: USB-2023</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">3</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">20</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button class="text-indigo-600 hover:text-indigo-900" onclick="openModal('reorder-product-modal')">
+                                <i class="fas fa-shopping-cart mr-1"></i> Reorder
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Suppliers Page (hidden by default) -->
+<div id="suppliers-page" class="hidden">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold">Suppliers</h2>
+        <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center" onclick="openModal('add-supplier-modal')">
+            <i class="fas fa-plus mr-2"></i> Add Supplier
+        </button>
+    </div>
+    
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
+        <div class="p-4 border-b border-gray-200">
+            <div class="relative w-64">
+                <input type="text" placeholder="Search suppliers..." class="pl-10 pr-4 py-2 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+            </div>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Supplier</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Products</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">Electronics Corp Inc.</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">John Smith</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">john@electronics-corp.com</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">+1 (555) 123-4567</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">12</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button class="text-indigo-600 hover:text-indigo-900 mr-3" onclick="loadPage('supplier-detail', 'supplier1')">View</button>
+                            <button class="text-yellow-600 hover:text-yellow-900 mr-3" onClick="openModal('edit-supplier-modal')">Edit</button>
+                            <button class="text-red-600 hover:text-red-900" onclick="confirmDelete('supplier1')">Delete</button>
+                        </td>
+                    </tr>
+                    
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">Gadgets & More Ltd.</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Sarah Johnson</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">sarah@gadgets-more.com</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">+1 (555) 987-6543</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">8</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button class="text-indigo-600 hover:text-indigo-900 mr-3" onclick="loadPage('supplier-detail', 'supplier2')">View</button>
+                            <button class="text-yellow-600 hover:text-yellow-900 mr-3" onClick="openModal('edit-supplier-modal')">Edit</button>
+                            <button class="text-red-600 hover:text-red-900" onclick="confirmDelete('supplier2')">Delete</button>
+                        </td>
+                    </tr>
+                    
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">Apparel Manufacturers</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Michael Chen</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">michael@apparel-mfg.com</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">+1 (555) 456-7890</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">15</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button class="text-indigo-600 hover:text-indigo-900 mr-3" onclick="loadPage('supplier-detail', 'supplier3')">View</button>
+                            <button class="text-yellow-600 hover:text-yellow-900 mr-3" onClick="openModal('edit-supplier-modal')">Edit</button>
+                            <button class="text-red-600 hover:text-red-900" onclick="confirmDelete('supplier3')">Delete</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Orders Page (hidden by default) -->
+<div id="orders-page" class="hidden">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold">Purchase Orders</h2>
+        <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center" onclick="openModal('create-order-modal')">
+            <i class="fas fa-plus mr-2"></i> Create Order
+        </button>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white rounded-xl shadow-sm p-4 cursor-pointer hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">Draft</p>
+                    <h4 class="text-xl font-bold mt-1">12</h4>
+                </div>
+                <div class="p-2 rounded-full bg-gray-100 text-gray-600">
+                    <i class="fas fa-file"></i>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-4 cursor-pointer hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">Sent</p>
+                    <h4 class="text-xl font-bold mt-1">8</h4>
+                </div>
+                <div class="p-2 rounded-full bg-blue-100 text-blue-600">
+                    <i class="fas fa-paper-plane"></i>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-4 cursor-pointer hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">Partially Received</p>
+                    <h4 class="text-xl font-bold mt-1">5</h4>
+                </div>
+                <div class="p-2 rounded-full bg-yellow-100 text-yellow-600">
+                    <i class="fas fa-truck-loading"></i>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-4 cursor-pointer hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">Completed</p>
+                    <h4 class="text-xl font-bold mt-1">24</h4>
+                </div>
+                <div class="p-2 rounded-full bg-green-100 text-green-600">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
+        <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+            <div class="relative w-64">
+                <input type="text" placeholder="Search orders..." class="pl-10 pr-4 py-2 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+            </div>
+            <div class="flex space-x-2">
+                <select class="border border-gray-300 rounded-lg px-3 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <option>All Status</option>
+                    <option>Draft</option>
+                    <option>Sent</option>
+                    <option>Partially Received</option>
+                    <option>Completed</option>
+                </select>
+                <button class="p-2 rounded-lg border border-gray-300 hover:bg-gray-50">
+                    <i class="fas fa-filter text-gray-600"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order #</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Supplier</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Items</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">PO-2023-1248</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Electronics Corp Inc.</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">May 15, 2023</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">4</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$1,249.89</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Sent</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button class="text-indigo-600 hover:text-indigo-900 mr-3" onclick="loadPage('order-detail', 'order1')">View</button>
+                            <button class="text-yellow-600 hover:text-yellow-900" onClick="openModal('receive-order-modal')">Receive</button>
+                        </td>
+                    </tr>
+                    
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">PO-2023-1247</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Gadgets & More Ltd.</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">May 12, 2023</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$598.45</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Partially Received</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button class="text-indigo-600 hover:text-indigo-900 mr-3" onclick="loadPage('order-detail', 'order2')">View</button>
+                            <button class="text-yellow-600 hover:text-yellow-900" onClick="openModal('receive-order-modal')">Receive</button>
+                        </td>
+                    </tr>
+                    
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">PO-2023-1246</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Apparel Manufacturers</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">May 10, 2023</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">8</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$1,056.24</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Completed</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button class="text-indigo-600 hover:text-indigo-900 mr-3" onclick="loadPage('order-detail', 'order3')">View</button>
+                            <button class="text-gray-400 cursor-not-allowed" disabled>Receive</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Reports Page (hidden by default) -->
+<div id="reports-page" class="hidden">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold">Reports</h2>
+        <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center" onclick="openModal('generate-report-modal')">
+            <i class="fas fa-file-export mr-2"></i> Generate Report
+        </button>
+    </div>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <!-- Inventory Value Report -->
+        <div class="bg-white rounded-xl shadow-sm p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold">Inventory Value Report</h3>
+                <button class="text-indigo-600 hover:text-indigo-800 text-sm font-medium" onclick="showAlert('info', 'Exporting inventory value report')">
+                    <i class="fas fa-download mr-1"></i> Export
+                </button>
+            </div>
+            <div class="chart-container">
+                <canvas id="inventoryValueChart"></canvas>
+            </div>
+            <div class="mt-4">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Items</th>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Value</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200 text-sm">
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-3 py-2 whitespace-nowrap">Electronics</td>
+                            <td class="px-3 py-2 whitespace-nowrap">248</td>
+                            <td class="px-3 py-2 whitespace-nowrap">$76,458.32</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-3 py-2 whitespace-nowrap">Apparel</td>
+                            <td class="px-3 py-2 whitespace-nowrap">426</td>
+                            <td class="px-3 py-2 whitespace-nowrap">$21,245.67</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-3 py-2 whitespace-nowrap">Home & Garden</td>
+                            <td class="px-3 py-2 whitespace-nowrap">312</td>
+                            <td class="px-3 py-2 whitespace-nowrap">$18,945.23</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-3 py-2 whitespace-nowrap">Others</td>
+                            <td class="px-3 py-2 whitespace-nowrap">262</td>
+                            <td class="px-3 py-2 whitespace-nowrap">$8,240.78</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Sales Report -->
+        <div class="bg-white rounded-xl shadow-sm p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold">Stock Movement Report</h3>
+                <button class="text-indigo-600 hover:text-indigo-800 text-sm font-medium" onclick="showAlert('info', 'Exporting stock movement report')">
+                    <i class="fas fa-download mr-1"></i> Export
+                </button>
+            </div>
+            <div class="chart-container">
+                <canvas id="stockMovementReportChart"></canvas>
+            </div>
+            <div class="mt-4">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">In</th>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Out</th>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Change</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200 text-sm">
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-3 py-2 whitespace-nowrap">Wireless Headphones</td>
+                            <td class="px-3 py-2 whitespace-nowrap text-green-600">+124</td>
+                            <td class="px-3 py-2 whitespace-nowrap text-red-600">-85</td>
+                            <td class="px-3 py-2 whitespace-nowrap">+39</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-3 py-2 whitespace-nowrap">Digital Camera</td>
+                            <td class="px-3 py-2 whitespace-nowrap text-green-600">+56</td>
+                            <td class="px-3 py-2 whitespace-nowrap text-red-600">-24</td>
+                            <td class="px-3 py-2 whitespace-nowrap">+32</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-3 py-2 whitespace-nowrap">Bluetooth Speaker</td>
+                            <td class="px-3 py-2 whitespace-nowrap text-green-600">+45</td>
+                            <td class="px-3 py-2 whitespace-nowrap text-red-600">-37</td>
+                            <td class="px-3 py-2 whitespace-nowrap">+8</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-3 py-2 whitespace-nowrap">Cotton T-Shirt</td>
+                            <td class="px-3 py-2 whitespace-nowrap text-green-600">+120</td>
+                            <td class="px-3 py-2 whitespace-nowrap text-red-600">-120</td>
+                            <td class="px-3 py-2 whitespace-nowrap">0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Custom Reports -->
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+        <h3 class="text-lg font-semibold mb-4">Custom Reports</h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="border border-gray-200 rounded-lg p-4 hover:border-indigo-300 transition-colors cursor-pointer">
+                <div class="flex items-center mb-3">
+                    <div class="p-2 rounded-full bg-indigo-100 text-indigo-600 mr-3">
+                        <i class="fas fa-boxes"></i>
+                    </div>
+                    <h4 class="font-medium">Inventory Summary</h4>
+                </div>
+                <p class="text-sm text-gray-500 mb-3">Detailed overview of your current inventory status</p>
+                <button class="text-indigo-600 hover:text-indigo-800 text-sm font-medium" onclick="showAlert('info', 'Generating inventory summary report')">
+                    Generate <i class="fas fa-arrow-right ml-1"></i>
+                </button>
+            </div>
+            
+            <div class="border border-gray-200 rounded-lg p-4 hover:border-indigo-300 transition-colors cursor-pointer">
+                <div class="flex items-center mb-3">
+                    <div class="p-2 rounded-full bg-green-100 text-green-600 mr-3">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h4 class="font-medium">Sales Trends</h4>
+                </div>
+                <p class="text-sm text-gray-500 mb-3">Analyze sales performance over time</p>
+                <button class="text-indigo-600 hover:text-indigo-800 text-sm font-medium" onclick="showAlert('info', 'Generating sales trends report')">
+                    Generate <i class="fas fa-arrow-right ml-1"></i>
+                </button>
+            </div>
+            
+            <div class="border border-gray-200 rounded-lg p-4 hover:border-indigo-300 transition-colors cursor-pointer">
+                <div class="flex items-center mb-3">
+                    <div class="p-2 rounded-full bg-blue-100 text-blue-600 mr-3">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h4 class="font-medium">Stock Alerts</h4>
+                </div>
+                <p class="text-sm text-gray-500 mb-3">Identify products that need reordering</p>
+                <button class="text-indigo-600 hover:text-indigo-800 text-sm font-medium" onclick="showAlert('info', 'Generating stock alerts report')">
+                    Generate <i class="fas fa-arrow-right ml-1"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Product Detail Page (hidden by default) -->
+<div id="product-detail-page" class="hidden">
+    <div class="flex items-center justify-between mb-6">
+        <button class="flex items-center text-indigo-600 hover:text-indigo-800" onclick="loadPage('products')">
+            <i class="fas fa-arrow-left mr-2"></i> Back to Products
+        </button>
+        <div class="flex space-x-3">
+            <button class="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 flex items-center" onclick="openModal('edit-product-modal')">
+                <i class="fas fa-edit mr-2"></i> Edit
+            </button>
+            <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center" onclick="openModal('adjust-stock-modal')">
+                <i class="fas fa-exchange-alt mr-2"></i> Adjust Stock
+            </button>
+            <button class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 flex items-center" onclick="confirmDelete('current-product')">
+                <i class="fas fa-trash-alt mr-2"></i> Delete
+            </button>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
+        <div class="p-6">
+            <div class="flex flex-col md:flex-row">
+                <div class="md:w-1/3 mb-6 md:mb-0 md:pr-6">
+                    <div class="bg-gray-100 rounded-lg p-4 flex items-center justify-center" style="height: 300px;">
+                        <img id="product-detail-image" src="" alt="Product" class="h-full object-contain">
+                    </div>
+                    <div class="mt-4 grid grid-cols-3 gap-2">
+                        <div class="bg-gray-100 rounded p-2 cursor-pointer border-2 border-transparent hover:border-indigo-300">
+                            <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80" class="w-full h-16 object-contain">
+                        </div>
+                        <div class="bg-gray-100 rounded p-2 cursor-pointer border-2 border-transparent hover:border-indigo-300">
+                            <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80" class="w-full h-16 object-contain">
+                        </div>
+                        <div class="bg-gray-100 rounded p-2 cursor-pointer border-2 border-transparent hover:border-indigo-300">
+                            <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80" class="w-full h-16 object-contain">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="md:w-2/3">
+                    <h2 id="product-detail-name" class="text-2xl font-bold mb-2"></h2>
+                    <div class="flex items-center mb-4">
+                        <span id="product-detail-sku" class="text-gray-500 mr-4"></span>
+                        <span id="product-detail-status" class="px-3 py-1 rounded-full text-sm"></span>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <h4 class="font-medium text-gray-500 mb-2">Basic Information</h4>
+                            <div class="space-y-3">
+                                <div>
+                                    <p class="text-sm text-gray-500">Category</p>
+                                    <p id="product-detail-category" class="text-sm"></p>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500">Brand</p>
+                                    <p id="product-detail-brand" class="text-sm"></p>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500">Barcode</p>
+                                    <p id="product-detail-barcode" class="text-sm"></p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-medium text-gray-500 mb-2">Pricing & Stock</h4>
+                            <div class="space-y-3">
+                                <div>
+                                    <p class="text-sm text-gray-500">Purchase Price</p>
+                                    <p id="product-detail-purchase-price" class="text-sm"></p>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500">Selling Price</p>
+                                    <p id="product-detail-selling-price" class="text-sm"></p>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500">Current Stock</p>
+                                    <p id="product-detail-stock" class="text-sm"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-medium text-gray-500 mb-2">Product Description</h4>
+                        <p id="product-detail-description" class="text-sm"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="border-t border-gray-200">
+            <div class="px-6 py-4">
+                <h3 class="font-medium">Additional Information</h3>
+                <div class="mt-2 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <p class="text-sm text-gray-500">Weight</p>
+                        <p id="product-detail-weight" class="text-sm mt-1"></p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Dimensions</p>
+                        <p id="product-detail-dimensions" class="text-sm mt-1"></p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Supplier</p>
+                        <p id="product-detail-supplier" class="text-sm mt-1"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Stock History -->
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
+        <div class="p-6 border-b border-gray-200">
+            <h3 class="font-medium">Stock History</h3>
+        </div>
+        <div class="px-6 py-4">
+            <div class="chart-container" style="height: 250px;">
+                <canvas id="productStockHistoryChart"></canvas>
+            </div>
+            <div class="mt-6 overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reference</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Adjustment</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">New Stock</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200 text-sm">
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap">May 15, 2023</td>
+                            <td class="px-6 py-4 whitespace-nowrap">PO-2023-1248</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-green-600">+12</td>
+                            <td class="px-6 py-4 whitespace-nowrap">124</td>
+                            <td class="px-6 py-4">Received new shipment</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap">May 10, 2023</td>
+                            <td class="px-6 py-4 whitespace-nowrap">ORD-1245</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-red-600">-5</td>
+                            <td class="px-6 py-4 whitespace-nowrap">112</td>
+                            <td class="px-6 py-4">Order fulfillment</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap">May 5, 2023</td>
+                            <td class="px-6 py-4 whitespace-nowrap">ADJ-12</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-red-600">-2</td>
+                            <td class="px-6 py-4 whitespace-nowrap">117</td>
+                            <td class="px-6 py-4">Damaged item</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap">May 1, 2023</td>
+                            <td class="px-6 py-4 whitespace-nowrap">PO-2023-1240</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-green-600">+50</td>
+                            <td class="px-6 py-4 whitespace-nowrap">119</td>
+                            <td class="px-6 py-4">Initial stock</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Users Page (hidden by default) -->
+<div id="users-page" class="hidden">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold">Users</h2>
+        <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center" onclick="openModal('add-user-modal')">
+            <i class="fas fa-plus mr-2"></i> Add User
+        </button>
+    </div>
+    
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
+        <div class="p-4 border-b border-gray-200">
+            <div class="relative w-64">
+                <input type="text" placeholder="Search users..." class="pl-10 pr-4 py-2 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+            </div>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Active</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10">
+                                    <img class="h-10 w-10 rounded-full" src="https://ui-avatars.com/api/?name=Admin+User&background=random" alt="User">
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-900">Admin User</div>
+                                    <div class="text-sm text-gray-500">admin</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">admin@example.com</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Administrator</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Today, 10:42 AM</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button class="text-yellow-600 hover:text-yellow-900 mr-3" onclick="openModal('edit-user-modal')">Edit</button>
+                            <button class="text-red-600 hover:text-red-900" onclick="showAlert('error', 'You cannot delete your own account!')">Delete</button>
+                        </td>
+                    </tr>
+                    
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10">
+                                    <img class="h-10 w-10 rounded-full" src="https://ui-avatars.com/api/?name=John+Smith&background=random" alt="User">
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-900">John Smith</div>
+                                    <div class="text-sm text-gray-500">john.smith</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">john.smith@example.com</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Manager</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Yesterday, 3:15 PM</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button class="text-yellow-600 hover:text-yellow-900 mr-3" onclick="openModal('edit-user-modal')">Edit</button>
+                            <button class="text-red-600 hover:text-red-900" onclick="confirmDelete('user2')">Delete</button>
+                        </td>
+                    </tr>
+                    
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items center">
+                                <div class="flex-shrink-0 h-10 w-10">
+                                    <img class="h-10 w-10 rounded-full" src="https://ui-avatars.com/api/?name=Sarah+Johnson&background=random" alt="User">
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-900">Sarah Johnson</div>
+                                    <div class="text-sm text-gray-500">sarah.j</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">sarah.j@example.com</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Staff</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2 days ago</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button class="text-yellow-600 hover:text-yellow-900 mr-3" onclick="openModal('edit-user-modal')">Edit</button>
+                            <button class="text-red-600 hover:text-red-900" onclick="confirmDelete('user3')">Delete</button>
+                        </td>
+                    </tr>
+                    
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10">
+                                    <img class="h-10 w-10 rounded-full" src="https://ui-avatars.com/api/?name=Michael+Chen&background=random" alt="User">
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-900">Michael Chen</div>
+                                    <div class="text-sm text-gray-500">michael.c</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">michael.c@example.com</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Staff</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">1 week ago</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Inactive</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button class="text-yellow-600 hover:text-yellow-900 mr-3" onclick="openModal('edit-user-modal')">Edit</button>
+                            <button class="text-red-600 hover:text-red-900" onclick="confirmDelete('user4')">Delete</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Settings Page (hidden by default) -->
+<div id="settings-page" class="hidden">
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold">Settings</h2>
+    </div>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+        <div class="bg-white rounded-xl shadow-sm p-6 lg:col-span-2">
+            <h3 class="text-lg font-semibold mb-4">General Settings</h3>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
+                    <input type="text" value="StockMaster Inc." class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Default Currency</label>
+                    <select class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <option>US Dollar (USD)</option>
+                        <option>Euro (EUR)</option>
+                        <option>British Pound (GBP)</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Time Zone</label>
+                    <select class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <option>(GMT-05:00) Eastern Time (US & Canada)</option>
+                        <option>(GMT-08:00) Pacific Time (US & Canada)</option>
+                    </select>
+                </div>
+                
+                <div class="flex items-center">
+                    <input type="checkbox" id="notifications" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" checked>
+                    <label for="notifications" class="ml-2 block text-sm text-gray-700">Enable Email Notifications</label>
+                </div>
+            </div>
+            
+            <div class="mt-8">
+                <h3 class="text-lg font-semibold mb-4">Inventory Settings</h3>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Default Low Stock Threshold</label>
+                        <input type="number" value="10" class="w-24 rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <p class="mt-1 text-xs text-gray-500">Items below this quantity will trigger a low stock alert.</p>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <input type="checkbox" id="negative-stock" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                        <label for="negative-stock" class="ml-2 block text-sm text-gray-700">Allow Negative Stock Levels</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-end">
+                <button class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 mr-2 hover:bg-gray-50">Cancel</button>
+                <button class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700" onclick="showAlert('success', 'Settings saved successfully!')">Save Changes</button>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-sm p-6">
+            <h3 class="text-lg font-semibold mb-4">Application Information</h3>
+            
+            <div class="space-y-6">
+                <div>
+                    <p class="text-sm text-gray-500">Version</p>
+                    <p class="text-sm mt-1">1.5.2</p>
+                </div>
+                
+                <div>
+                    <p class="text-sm text-gray-500">Last Updated</p>
+                    <p class="text-sm mt-1">May 15, 2023</p>
+                </div>
+                
+                <div>
+                    <p class="text-sm text-gray-500">Database Size</p>
+                    <p class="text-sm mt-1">24.5 MB</p>
+                </div>
+                
+                <div>
+                    <button class="text-indigo-600 hover:text-indigo-800 font-medium" onclick="showAlert('info', 'Checking for updates...')">
+                        <i class="fas fa-sync-alt mr-1"></i> Check for Updates
+                    </button>
+                </div>
+                
+                <div class="pt-4 border-t border-gray-200">
+                    <button class="text-red-600 hover:text-red-800 font-medium" onclick="confirmAction('reset-data', 'This will reset all application data to factory defaults. Are you sure?')">
+                        <i class="fas fa-trash-alt mr-1"></i> Reset to Factory Defaults
+                    </button>
+                </div>
+                
+                <div class="pt-4 border-t border-gray-200">
+                    <h4 class="font-medium mb-2">System Requirements</h4>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                            <span>PHP 7.4 or higher</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                            <span>MySQL 5.7 or higher</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                            <span>512MB RAM (1GB recommended)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- All the Modals -->
+<!-- Add Product Modal -->
+<div id="add-product-modal" class="modal fixed z-10 inset-0 overflow-y-auto hidden">
+    <div class="modal-backdrop fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+    <div class="modal-container bg-white rounded-lg shadow-xl transform transition-all sm:max-w-3xl sm:w-full m-8 sm:mx-auto">
+        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <div class="flex justify-between items-start">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Add New Product</h3>
+                <button type="button" class="text-gray-400 hover:text-gray-500" onclick="closeModal('add-product-modal')">
+                    <span class="sr-only">Close</span>
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="mt-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
+                        <input type="text" class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">SKU</label>
+                        <input type="text" class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                        <select class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <option>Select Category</option>
+                            <option>Electronics</option>
+                            <option>Clothing</option>
+                            <option>Home & Garden</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Brand</label>
+                        <input type="text" class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Purchase Price</label>
+                        <div class="relative rounded-lg shadow-sm">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="text-gray-500 sm:text-sm">$</span>
+                            </div>
+                            <input type="text" class="pl-7 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="0.00">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Selling Price</label>
+                        <div class="relative rounded-lg shadow-sm">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="text-gray-500 sm:text-sm">$</span>
+                            </div>
+                            <input type="text" class="pl-7 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="0.00">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Initial Stock</label>
+                        <input type="number" value="0" class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Stock Threshold</label>
+                        <input type="number" value="10" class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea rows="3" class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                </div>
+                
+                <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Weight (kg)</label>
+                        <input type="text" class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Dimensions (L x W x H)</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <input type="text" placeholder="Length" class="rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <input type="text" placeholder="Width" class="rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <input type="text" placeholder="Height" class="rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Images</label>
+                    <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg">
+                        <div class="space-y-1 text-center">
+                            <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                            <div class="flex text-sm text-gray-600">
+                                <label for="file-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
+                                    <span>Upload a file</span>
+                                    <input id="file-upload" name="file-upload" type="file" class="sr-only">
+                                </label>
+                                <p class="pl-1">or drag and drop</p>
+                            </div>
+                            <p class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+            <button type="button" class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm" onclick="showAlert('success', 'Product added successfully!'); closeModal('add-product-modal')">
+                Add Product
+            </button>
+            <button type="button" class="mt-3 w-full inline-flex justify-center rounded-lg border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" onclick="closeModal('add-product-modal')">
+                Cancel
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Product Modal -->
+<div id="edit-product-modal" class="modal fixed z-10 inset-0 overflow-y-auto hidden">
+    <div class="modal-backdrop fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+    <div class="modal-container bg-white rounded-lg shadow-xl transform transition-all sm:max-w-3xl sm:w-full m-8 sm:mx-auto">
+        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <div class="flex justify-between items-start">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Edit Product</h3>
+                <button type="button" class="text-gray-400 hover:text-gray-500" onclick="closeModal('edit-product-modal')">
+                    <span class="sr-only">Close</span>
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="mt-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
+                        <input type="text" value="Wireless Headphones" class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">SKU</label>
+                        <input type="text" value="HP-2023" class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                        <select class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <option>Electronics</option>
+                            <option>Clothing</option>
+                            <option>Home & Garden</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Brand</label>
+                        <input type="text" value="SoundMaster" class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Purchase Price</label>
+                        <div class="relative rounded-lg shadow-sm">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="text-gray-500 sm:text-sm">$</span>
+                            </div>
+                            <input type="text" value="45.00" class="pl-7 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Selling Price</label>
+                        <div class="relative rounded-lg shadow-sm">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="text-gray-500 sm:text-sm">$</span>
+                            </div>
+                            <input type="text" value="89.99" class="pl-7 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Stock Threshold</label>
+                        <input type="number" value="10" class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea rows="3" class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">Premium wireless headphones with noise cancellation and 30-hour battery life. Perfect for commuters and music lovers.</textarea>
+                </div>
+                
+                <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Weight (kg)</label>
+                        <input type="text" value="0.25" class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Dimensions (L x W x H)</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <input type="text" value="18" placeholder="Length" class="rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <input type="text" value="15" placeholder="Width" class="rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <input type="text" value="8" placeholder="Height" class="rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Images</label>
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="bg-gray-100 p-2 rounded-lg relative">
+                            <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80" class="w-full h-24 object-contain">
+                            <button class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center">
+                                <i class="fas fa-times text-xs"></i>
+                            </button>
+                        </div>
+                        <div class="bg-gray-100 p-2 rounded-lg">
+                            <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80" class="w-full h-24 object-contain">
+                        </div>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer">
+                            <i class="fas fa-plus text-gray-400"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+            <button type="button" class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm" onclick="showAlert('success', 'Product updated successfully!'); closeModal('edit-product-modal')">
+                Save Changes
+            </button>
+            <button type="button" class="mt-3 w-full inline-flex justify-center rounded-lg border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" onclick="closeModal('edit-product-modal')">
+                Cancel
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Create Purchase Order Modal -->
+<div id="create-order-modal" class="modal fixed z-10 inset-0 overflow-y-auto hidden">
+    <div class="modal-backdrop fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+    <div class="modal-container bg-white rounded-lg shadow-xl transform transition-all sm:max-w-4xl sm:w-full m-8 sm:mx-auto">
+        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <div class="flex justify-between items-start">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Create Purchase Order</h3>
+                <button type="button" class="text-gray-400 hover:text-gray-500" onclick="closeModal('create-order-modal')">
+                    <span class="sr-only">Close</span>
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="mt-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Supplier</label>
+                        <select class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <option>Select Supplier</option>
+                            <option>Electronics Corp Inc.</option>
+                            <option>Gadgets & More Ltd.</option>
+                            <option>Apparel Manufacturers</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Order Date</label>
+                        <input type="date" class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Expected Delivery</label>
+                        <input type="date" class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Order Reference</label>
+                        <input type="text" placeholder="PO-2023-" class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <div class="flex items-center justify-between">
+                        <h4 class="font-medium">Order Items</h4>
+                        <button class="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center" onclick="addOrderItemRow()">
+                            <i class="fas fa-plus mr-1"></i> Add Item
+                        </button>
+                    </div>
+                    
+                    <div class="mt-3 overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit Cost</th>
+                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="order-items-table" class="bg-white divide-y divide-gray-200">
+                                <tr>
+                                    <td class="px-3 py-4 whitespace-nowrap">
+                                        <select class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                                            <option>Select Product</option>
+                                            <option>Wireless Headphones</option>
+                                            <option>Digital Camera</option>
+                                            <option>Bluetooth Speaker</option>
+                                        </select>
+                                    </td>
+                                    <td class="px-3 py-4 whitespace-nowrap">
+                                        <input type="number" value="1" min="1" class="w-20 rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                                    </td>
+                                    <td class="px-3 py-4 whitespace-nowrap">
+                                        <div class="relative rounded-lg shadow-sm">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <span class="text-gray-500 text-sm">$</span>
+                                            </div>
+                                            <input type="text" value="45.00" class="pl-7 w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                                        </div>
+                                    </td>
+                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        $45.00
+                                    </td>
+                                    <td class="px-3 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <button class="text-red-600 hover:text-red-900" onclick="removeOrderItemRow(this)">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot class="bg-gray-50">
+                                <tr>
+                                    <td colspan="3" class="px-3 py-4 text-right text-sm font-medium text-gray-500">
+                                        Subtotal
+                                    </td>
+                                    <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                        $45.00
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="px-3 py-4 text-right text-sm font-medium text-gray-500">
+                                        Tax (8.25%)
+                                    </td>
+                                    <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                        $3.71
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="px-3 py-4 text-right text-sm font-medium text-gray-500">
+                                        Shipping
+                                    </td>
+                                    <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                        $0.00
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="px-3 py-4 text-right text-sm font-medium text-gray-700">
+                                        Total
+                                    </td>
+                                    <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                        $48.71
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                    <textarea rows="3" class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+            <button type="button" class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm" onclick="showAlert('success', 'Purchase order created successfully!'); closeModal('create-order-modal')">
+                Create Order
+            </button>
+            <button type="button" class="mt-3 w-full inline-flex justify-center rounded-lg border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" onclick="closeModal('create-order-modal')">
+                Cancel
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Receive Order Modal -->
+<div id="receive-order-modal" class="modal fixed z-10 inset-0 overflow-y-auto hidden">
+    <div class="modal-backdrop fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+    <div class="modal-container bg-white rounded-lg shadow-xl transform transition-all sm:max-w-4xl sm:w-full m-8 sm:mx-auto">
+        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <div class="flex justify-between items-start">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Receive Purchase Order</h3>
+                <button type="button" class="text-gray-400 hover:text-gray-500" onclick="closeModal('receive-order-modal')">
+                    <span class="sr-only">Close</span>
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="mt-6">
+                <div class="mb-6 space-y-2">
+                    <div class="text-sm text-gray-500">Order: <span class="font-medium text-gray-900">PO-2023-1248</span></div>
+                    <div class="text-sm text-gray-500">Supplier: <span class="font-medium text-gray-900">Electronics Corp Inc.</span></div>
+                    <div class="text-sm text-gray-500">Expected: <span class="font-medium text-gray-900">May 20, 2023</span></div>
+                </div>
+                
+                <div class="mt-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Receive Date</label>
+                    <input type="date" class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                
+                <div class="mt-4">
+                    <div class="flex items-center justify-between">
+                        <h4 class="font-medium">Order Items</h4>
+                    </div>
+                    
+                    <div class="mt-3 overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ordered</th>
+                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Waiting</th>
+                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Receive</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr>
+                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        Wireless Headphones
+                                    </td>
+                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        12
+                                    </td>
+                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        12
+                                    </td>
+                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        <input type="number" value="12" min="0" max="12" class="w-20 rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        Digital Camera
+                                    </td>
+                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        5
+                                    </td>
+                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        5
+                                    </td>
+                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        <input type="number" value="5" min="0" max="5" class="w-20 rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                    <textarea rows="3" class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Any notes about this shipment"></textarea>
+                </div>
+                
+                <div class="mt-6">
+                    <div class="flex items-center">
+                        <input id="mark-received" name="mark-received" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                        <label for="mark-received" class="ml-2 block text-sm text-gray-700">
+                            Mark as fully received
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+            <button type="button" class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm" onclick="showAlert('success', 'Order items received successfully!'); closeModal('receive-order-modal')">
+                Receive Items
+            </button>
+            <button type="button" class="mt-3 w-full inline-flex justify-center rounded-lg border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" onclick="closeModal('receive-order-modal')">
+                Cancel
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Inventory Count Modal -->
+<div id="inventory-count-modal" class="modal fixed z-10 inset-0 overflow-y-auto hidden">
+    <div class="modal-backdrop fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+    <div class="modal-container bg-white rounded-lg shadow-xl transform transition-all sm:max-w-4xl sm:w-full m-8 sm:mx-auto">
+        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <div class="flex justify-between items-start">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Inventory Count</h3>
+                <button type="button" class="text-gray-400 hover:text-gray-500" onclick="closeModal('inventory-count-modal')">
+                    <span class="sr-only">Close</span>
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="mt-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Count Name</label>
+                        <input type="text" placeholder="e.g. May 2023 Count" class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                        <input type="date" class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                        <select class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">All Categories</option>
+                            <option>Electronics</option>
+                            <option>Apparel</option>
+                            <option>Home & Garden</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Warehouse</label>
+                        <select class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <option>Main Warehouse</option>
+                            <option>Secondary Warehouse</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <div class="flex items-center justify-between">
+                        <h4 class="font-medium">Count Items</h4>
+                        <button class="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center" onclick="addCountItemRow()">
+                            <i class="fas fa-plus mr-1"></i> Add Item
+                        </button>
+                    </div>
+                    
+                    <div class="mt-3 overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current Stock</th>
+                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Count</th>
+                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Difference</th>
+                                    <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="count-items-table" class="bg-white divide-y divide-gray-200">
+                                <tr>
+                                    <td class="px-3 py-4 whitespace-nowrap">
+                                        <select class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                                            <option>Select Product</option>
+                                            <option>Wireless Headphones</option>
+                                            <option>Digital Camera</option>
+                                            <option>Bluetooth Speaker</option>
+                                        </select>
+                                    </td>
+                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        124
+                                    </td>
+                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        <input type="number" value="124" min="0" class="w-20 rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                                    </td>
+                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        0
+                                    </td>
+                                    <td class="px-3 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <button class="text-red-600 hover:text-red-900" onclick="removeCountItemRow(this)">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                    <textarea rows="3" class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+            <button type="button" class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm" onclick="showAlert('success', 'Inventory count saved successfully!'); closeModal('inventory-count-modal')">
+                Save Count
+            </button>
+            <button type="button" class="mt-3 w-full inline-flex justify-center rounded-lg border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" onclick="closeModal('inventory-count-modal')">
+                Cancel
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Adjust Stock Modal -->
+<div id="adjust-stock-modal" class="modal fixed z-10 inset-0 overflow-y-auto hidden">
+    <div class="modal-backdrop fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+    <div class="modal-container bg-white rounded-lg shadow-xl transform transition-all sm:max-w-lg sm:w-full m-8 sm:mx-auto">
+        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <div class="flex justify-between items-start">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Adjust Stock</h3>
+                <button type="button" class="text-gray-400 hover:text-gray-500" onclick="closeModal('adjust-stock-modal')">
+                    <span class="sr-only">Close</span>
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="mt-6">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Product</label>
+                    <p class="text-sm text-gray-900">Wireless Headphones (SKU: HP-2023)</p>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Current Stock</label>
+                    <p class="text-sm text-gray-900">124</p>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Adjustment Type</label>
+                    <div class="mt-1">
+                        <select id="adjustment-type" class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" onchange="toggleAdjustmentFields()">
+                            <option value="increase">Increase</option>
+                            <option value="decrease">Decrease</option>
+                            <option value="set">Set to Specific Value</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="adjustment-quantity" class="mb-4">
+                    <label for="quantity" class="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+                    <input type="number" id="quantity" class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" min="1" value="1">
+                </div>
+                
+                <div id="set-value" class="mb-4 hidden">
+                    <label for="new-value" class="block text-sm font-medium text-gray-700 mb-1">New Stock Value</label>
+                    <input type="number" id="new-value" class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" min="0" value="124">
+                </div>
+                
+                <div class="mb-4">
+                    <label for="reason" class="block text-sm font-medium text-gray-700 mb-1">Reason</label>
+                    <select id="reason" class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <option>Received Stock</option>
+                        <option>Stock Adjustment</option>
+                        <option>Damaged Goods</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label for="notes" class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                    <textarea id="notes" rows="3" class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+            <button type="button" class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm" onclick="showAlert('success', 'Stock adjusted successfully!'); closeModal('adjust-stock-modal')">
+                Adjust Stock
+            </button>
+            <button type="button" class="mt-3 w-full inline-flex justify-center rounded-lg border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" onclick="closeModal('adjust-stock-modal')">
+                Cancel
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Confirm Delete Modal -->
+<div id="confirm-delete-modal" class="modal fixed z-10 inset-0 overflow-y-auto hidden">
+    <div class="modal-backdrop fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+    <div class="modal-container bg-white rounded-lg shadow-xl transform transition-all sm:max-w-lg sm:w-full m-8 sm:mx-auto">
+        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <div class="sm:flex sm:items-start">
+                <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                    <i class="fas fa-exclamation-triangle text-red-600"></i>
+                </div>
+                <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900" id="delete-title">Delete Product</h3>
+                    <div class="mt-2">
+                        <p class="text-sm text-gray-500" id="delete-message">Are you sure you want to delete this product? This action cannot be undone.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+            <button type="button" class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm" onclick="proceedWithDelete()">
+                Delete
+            </button>
+            <button type="button" class="mt-3 w-full inline-flex justify-center rounded-lg border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" onclick="closeModal('confirm-delete-modal')">
+                Cancel
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Overlay -->
+<div id="loading-overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg p-6 flex flex-col items-center">
+        <div class="spinner border-4 border-indigo-500 border-t-transparent rounded-full w-12 h-12 mb-4"></div>
+        <p class="text-gray-700">Loading...</p>
+    </div>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
